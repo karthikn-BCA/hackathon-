@@ -97,7 +97,7 @@ export default function RoadmapsPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-100px)] gap-6 p-4">
+    <div className="flex flex-col h-[calc(100vh-100px)] gap-4 p-4">
       
       {/* Top Tabs for Courses */}
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
@@ -106,7 +106,7 @@ export default function RoadmapsPage() {
             key={key}
             onClick={() => setActiveTab(key)}
             className={`
-              px-6 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap shadow-sm
+              px-5 py-2 rounded-full font-bold text-sm transition-all whitespace-nowrap shadow-sm
               ${activeTab === key 
                 ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md scale-105" 
                 : "bg-white text-slate-500 hover:bg-slate-50 border"}
@@ -120,34 +120,34 @@ export default function RoadmapsPage() {
       <div className="flex gap-6 flex-1 overflow-hidden">
         
         {/* Main Roadmap Area */}
-        <div className="flex-1 border rounded-2xl bg-white shadow-sm p-8 relative overflow-y-auto bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+        <div className="flex-1 border rounded-2xl bg-white shadow-sm p-6 relative overflow-y-auto bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
           
-          <div className="mt-8 max-w-2xl mx-auto relative">
+          <div className="mt-4 max-w-2xl mx-auto relative">
             
             {/* Main vertical path line */}
-            <div className="absolute w-1.5 bg-gradient-to-b from-blue-200 via-indigo-200 to-slate-200 h-full left-1/2 -translate-x-1/2 z-0 rounded-full"></div>
+            <div className="absolute w-1 bg-gradient-to-b from-blue-200 via-indigo-200 to-slate-200 h-full left-1/2 -translate-x-1/2 z-0 rounded-full"></div>
 
             {nodes.map((node, idx) => {
               const isLeft = idx % 2 === 0;
               return (
-                <div key={node.id} className="relative z-10 w-full flex items-center mb-12 group">
+                <div key={node.id} className="relative z-10 w-full flex items-center mb-8 group">
                   
                   {/* Left Side */}
-                  <div className={`w-1/2 pr-12 flex justify-end ${!isLeft ? 'invisible' : ''}`}>
+                  <div className={`w-1/2 pr-10 flex justify-end ${!isLeft ? 'invisible' : ''}`}>
                     <button 
                       onClick={() => setSelectedNode(node)}
                       className={`
-                        w-72 p-5 rounded-xl font-bold text-left transition-all shadow-md relative group-hover:-translate-y-1 group-hover:shadow-lg
+                        w-64 p-4 rounded-xl font-bold text-left transition-all shadow-sm relative group-hover:-translate-y-0.5 group-hover:shadow-md
                         ${node.status === "completed" ? "bg-gradient-to-br from-emerald-500 to-green-600 text-white border-none" : ""}
-                        ${node.status === "current" ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-none ring-4 ring-blue-100 shadow-blue-200/50" : ""}
+                        ${node.status === "current" ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-none ring-2 ring-blue-100 shadow-blue-200/50" : ""}
                         ${node.status === "locked" ? "bg-white text-slate-500 border border-slate-200" : ""}
                       `}
                     >
                       {/* Connector line to center */}
-                      <div className={`absolute top-1/2 -right-12 w-12 h-1 ${node.status === 'locked' ? 'bg-slate-200' : (node.status === 'completed' ? 'bg-emerald-500' : 'bg-blue-600')} -translate-y-1/2 z-0`}></div>
+                      <div className={`absolute top-1/2 -right-10 w-10 h-1 ${node.status === 'locked' ? 'bg-slate-200' : (node.status === 'completed' ? 'bg-emerald-500' : 'bg-blue-600')} -translate-y-1/2 z-0`}></div>
                       
-                      <div className="text-lg mb-1">{node.label}</div>
-                      <div className={`text-xs font-semibold uppercase tracking-widest flex items-center gap-1.5 opacity-90
+                      <div className="text-base mb-1">{node.label}</div>
+                      <div className={`text-[10px] font-semibold uppercase tracking-widest flex items-center gap-1.5 opacity-90
                         ${node.status === "locked" ? "text-slate-400" : "text-white"}
                       `}>
                         {node.status === "completed" && <span className="bg-white/20 px-2 py-0.5 rounded-full">✓ Done</span>}
@@ -158,27 +158,27 @@ export default function RoadmapsPage() {
                   </div>
 
                   {/* Center Node on the line */}
-                  <div className={`absolute left-1/2 -translate-x-1/2 w-8 h-8 rounded-full border-4 border-white z-20 flex items-center justify-center shadow-md transition-colors
-                       ${node.status === 'completed' ? 'bg-emerald-500' : (node.status === 'current' ? 'bg-blue-600 ring-4 ring-blue-100' : 'bg-slate-300')}
+                  <div className={`absolute left-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-[3px] border-white z-20 flex items-center justify-center shadow-sm transition-colors
+                       ${node.status === 'completed' ? 'bg-emerald-500' : (node.status === 'current' ? 'bg-blue-600 ring-2 ring-blue-100' : 'bg-slate-300')}
                   `}>
                   </div>
 
                   {/* Right Side */}
-                  <div className={`w-1/2 pl-12 flex justify-start ${isLeft ? 'invisible' : ''}`}>
+                  <div className={`w-1/2 pl-10 flex justify-start ${isLeft ? 'invisible' : ''}`}>
                     <button 
                       onClick={() => setSelectedNode(node)}
                       className={`
-                        w-72 p-5 rounded-xl font-bold text-left transition-all shadow-md relative group-hover:-translate-y-1 group-hover:shadow-lg
+                        w-64 p-4 rounded-xl font-bold text-left transition-all shadow-sm relative group-hover:-translate-y-0.5 group-hover:shadow-md
                         ${node.status === "completed" ? "bg-gradient-to-br from-emerald-500 to-green-600 text-white border-none" : ""}
-                        ${node.status === "current" ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-none ring-4 ring-blue-100 shadow-blue-200/50" : ""}
+                        ${node.status === "current" ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-none ring-2 ring-blue-100 shadow-blue-200/50" : ""}
                         ${node.status === "locked" ? "bg-white text-slate-500 border border-slate-200" : ""}
                       `}
                     >
                       {/* Connector line to center */}
-                      <div className={`absolute top-1/2 -left-12 w-12 h-1 ${node.status === 'locked' ? 'bg-slate-200' : (node.status === 'completed' ? 'bg-emerald-500' : 'bg-blue-600')} -translate-y-1/2 z-0`}></div>
+                      <div className={`absolute top-1/2 -left-10 w-10 h-1 ${node.status === 'locked' ? 'bg-slate-200' : (node.status === 'completed' ? 'bg-emerald-500' : 'bg-blue-600')} -translate-y-1/2 z-0`}></div>
                       
-                      <div className="text-lg mb-1">{node.label}</div>
-                      <div className={`text-xs font-semibold uppercase tracking-widest flex items-center gap-1.5 opacity-90
+                      <div className="text-base mb-1">{node.label}</div>
+                      <div className={`text-[10px] font-semibold uppercase tracking-widest flex items-center gap-1.5 opacity-90
                         ${node.status === "locked" ? "text-slate-400" : "text-white"}
                       `}>
                         {node.status === "completed" && <span className="bg-white/20 px-2 py-0.5 rounded-full">✓ Done</span>}
@@ -196,21 +196,21 @@ export default function RoadmapsPage() {
         
         {/* Sidebar Area */}
         {selectedNode && (
-          <div className="w-96 border rounded-2xl bg-white p-8 shadow-lg flex flex-col relative overflow-hidden">
+          <div className="w-80 border rounded-2xl bg-white p-6 shadow-md flex flex-col relative overflow-hidden">
             
             {/* Header Status Bar Gradient */}
-            <div className={`absolute top-0 left-0 w-full h-3 
+            <div className={`absolute top-0 left-0 w-full h-2 
               ${selectedNode.status === 'completed' ? 'bg-gradient-to-r from-emerald-400 to-green-500' : ''}
               ${selectedNode.status === 'current' ? 'bg-gradient-to-r from-blue-500 to-indigo-500' : ''}
               ${selectedNode.status === 'locked' ? 'bg-slate-200' : ''}
             `}></div>
 
-            <div className="text-xs font-bold text-indigo-600 uppercase tracking-widest mt-4 mb-2">
+            <div className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mt-2 mb-1">
               {ROADMAPS[activeTab].title}
             </div>
-            <h3 className="font-extrabold text-3xl mb-4 tracking-tight text-slate-900">{selectedNode.label}</h3>
+            <h3 className="font-extrabold text-2xl mb-3 tracking-tight text-slate-900">{selectedNode.label}</h3>
             
-            <div className={`inline-flex px-3 py-1.5 rounded-full text-xs font-bold uppercase w-fit tracking-wider shadow-sm border
+            <div className={`inline-flex px-3 py-1 rounded-full text-[10px] font-bold uppercase w-fit tracking-wider shadow-sm border
               ${selectedNode.status === 'completed' ? 'bg-green-50 text-green-700 border-green-200' : ''}
               ${selectedNode.status === 'current' ? 'bg-blue-50 text-blue-700 border-blue-200' : ''}
               ${selectedNode.status === 'locked' ? 'bg-slate-50 text-slate-500 border-slate-200' : ''}
@@ -218,31 +218,31 @@ export default function RoadmapsPage() {
               {selectedNode.status}
             </div>
 
-            <p className="text-slate-600 mb-8 mt-4 leading-relaxed">
+            <p className="text-sm text-slate-600 mb-6 mt-4 leading-relaxed">
               {selectedNode.description}
             </p>
             
-            <div className="space-y-4 flex-1">
-              <h4 className="font-bold text-sm uppercase tracking-widest text-slate-400">Curated Resources</h4>
-              <div className="space-y-3">
+            <div className="space-y-3 flex-1">
+              <h4 className="font-bold text-xs uppercase tracking-widest text-slate-400">Curated Resources</h4>
+              <div className="space-y-2">
                 {[1, 2, 3].map((i) => (
-                  <a key={i} href="#" className="group flex flex-col p-3 rounded-lg border bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors">
+                  <a key={i} href="#" className="group flex flex-col p-2.5 rounded-lg border bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors">
                     <span className="text-sm font-bold text-indigo-600 group-hover:text-indigo-700">Official Resource {i}</span>
-                    <span className="text-xs text-slate-500 mt-1">Interactive guide and sandbox.</span>
+                    <span className="text-[11px] text-slate-500 mt-0.5">Interactive guide and sandbox.</span>
                   </a>
                 ))}
               </div>
             </div>
 
             <Button 
-              className={`w-full mt-8 py-6 font-bold tracking-widest uppercase shadow-md transition-all rounded-xl
+              className={`w-full mt-6 py-5 font-bold tracking-widest uppercase shadow-md transition-all rounded-xl text-xs
                 ${selectedNode.status === 'current' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:-translate-y-0.5' : ''}
               `}
               onClick={markCompleted}
               disabled={selectedNode.status === "completed" || selectedNode.status === "locked"}
             >
               {selectedNode.status === "completed" ? "Completed ✓" : 
-               selectedNode.status === "locked" ? "Locked (Prerequisites)" : "Mark as Completed"}
+               selectedNode.status === "locked" ? "Locked (Finish Pre-reqs)" : "Mark as Completed"}
             </Button>
           </div>
         )}

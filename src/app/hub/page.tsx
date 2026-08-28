@@ -10,7 +10,8 @@ const initialProjects = [
     description: "An app that generates daily study schedules based on syllabus and exam dates.",
     creator: "Alice (CS 3rd Year)",
     openRoles: ["Frontend Developer", "UI/UX Designer"],
-    endorsed: true
+    endorsed: true,
+    applied: false
   },
   {
     id: "2",
@@ -18,7 +19,8 @@ const initialProjects = [
     description: "A centralized portal for reporting and claiming lost items on campus.",
     creator: "Bob (IT 2nd Year)",
     openRoles: ["Backend Developer (Node.js)"],
-    endorsed: false
+    endorsed: false,
+    applied: false
   }
 ]
 
@@ -41,7 +43,8 @@ export default function ProjectHub() {
       description,
       creator: "You (Student)",
       openRoles: skills.split(",").map(s => s.trim()).filter(s => s),
-      endorsed: false
+      endorsed: false,
+      applied: false
     }
 
     setProjects([newProject, ...projects])
@@ -52,6 +55,12 @@ export default function ProjectHub() {
     setDescription("")
     setTeamSize("2")
     setSkills("")
+  }
+
+  const handleApply = (id: string) => {
+    setProjects(projects.map(p => 
+      p.id === id ? { ...p, applied: true } : p
+    ))
   }
 
   return (
@@ -94,7 +103,14 @@ export default function ProjectHub() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="w-full">Apply to Join</Button>
+              <Button 
+                className={`w-full transition-all ${project.applied ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                onClick={() => handleApply(project.id)}
+                disabled={project.applied || project.creator === "You (Student)"}
+                variant={project.applied ? "default" : "default"}
+              >
+                {project.creator === "You (Student)" ? "Your Project" : project.applied ? "Request Sent ✓" : "Apply to Join"}
+              </Button>
             </CardFooter>
           </Card>
         ))}
