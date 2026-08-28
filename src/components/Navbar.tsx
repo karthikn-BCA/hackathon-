@@ -1,13 +1,21 @@
 "use client"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
 
 export function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   
   // For the hackathon demo, we use a simple state to switch roles
   const [role, setRole] = useState<"student" | "faculty" | "recruiter">("student")
+
+  const handleRoleChange = (newRole: "student" | "faculty" | "recruiter") => {
+    setRole(newRole)
+    if (newRole === "faculty") router.push("/faculty")
+    else if (newRole === "recruiter") router.push("/recruiter")
+    else if (newRole === "student" && (pathname === "/faculty" || pathname === "/recruiter")) router.push("/hub")
+  }
 
   return (
     <nav className="border-b bg-white px-6 py-4 flex items-center justify-between">
@@ -38,7 +46,7 @@ export function Navbar() {
           {(["student", "faculty", "recruiter"] as const).map((r) => (
             <button
               key={r}
-              onClick={() => setRole(r)}
+              onClick={() => handleRoleChange(r)}
               className={`
                 px-4 py-1.5 rounded-full text-xs font-bold capitalize transition-all
                 ${role === r 
