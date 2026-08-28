@@ -27,21 +27,14 @@ export default function Home() {
       
       <div className="flex flex-col items-center gap-4">
         <div className="flex gap-4">
-          <Button asChild size="lg">
-            <Link href="/hub">Student: Project Hub</Link>
+          <Button asChild size="lg" className="font-bold px-8">
+            <Link href="/login">Get Started / Login</Link>
           </Button>
-          <Button asChild size="lg" variant="outline">
+          <Button asChild size="lg" variant="outline" className="font-bold px-8">
             <Link href="/roadmaps">Explore Roadmaps</Link>
           </Button>
         </div>
-        <div className="flex gap-4 mt-2">
-          <Button asChild variant="secondary" size="sm">
-            <Link href="/faculty">Faculty Portal</Link>
-          </Button>
-          <Button asChild variant="secondary" size="sm">
-            <Link href="/recruiter">Recruiter Talent Search</Link>
-          </Button>
-        </div>
+        <p className="text-xs text-slate-400 mt-2 font-medium">Available for Students, Faculty, Recruiters, and Alumni.</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12 text-left w-full">

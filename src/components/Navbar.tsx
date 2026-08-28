@@ -8,7 +8,13 @@ export function Navbar() {
   const router = useRouter()
   
   // For the hackathon demo, we use a simple state to switch roles
-  const [role, setRole] = useState<"student" | "faculty" | "recruiter" | "alumni">("student")
+  const getInitialRole = () => {
+    if (pathname.includes("/faculty")) return "faculty"
+    if (pathname.includes("/recruiter")) return "recruiter"
+    if (pathname.includes("/alumni")) return "alumni"
+    return "student"
+  }
+  const [role, setRole] = useState<"student" | "faculty" | "recruiter" | "alumni">(getInitialRole())
 
   const handleRoleChange = (newRole: "student" | "faculty" | "recruiter" | "alumni") => {
     setRole(newRole)
@@ -17,6 +23,8 @@ export function Navbar() {
     else if (newRole === "alumni") router.push("/alumni")
     else if (newRole === "student" && (pathname === "/faculty" || pathname === "/recruiter" || pathname === "/alumni")) router.push("/dashboard")
   }
+
+  if (pathname === "/login") return null
 
   return (
     <nav className="border-b bg-white px-6 py-4 flex items-center justify-between">
