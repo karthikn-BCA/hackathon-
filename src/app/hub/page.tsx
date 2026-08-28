@@ -28,6 +28,11 @@ export default function ProjectHub() {
       .select('*')
       .order('created_at', { ascending: false })
     
+    if (error) {
+      console.error("Error fetching projects:", error)
+      alert("Error fetching from database. Check Netlify Environment Variables!")
+    }
+
     if (data) {
       setProjects(data.map(p => ({ ...p, applied: false })))
     }
@@ -52,6 +57,12 @@ export default function ProjectHub() {
       ])
       .select()
 
+    if (error) {
+      console.error("Error inserting project:", error)
+      alert("Failed to save to database. Make sure you triggered a new Netlify deploy after adding your keys!")
+      return
+    }
+
     if (data && data[0]) {
       setProjects([{ ...data[0], applied: false, isNew: true }, ...projects])
     }
@@ -61,6 +72,15 @@ export default function ProjectHub() {
     setDescription("")
     setTeamSize("2")
     setSkills("")
+  }
+
+  const handleDeleteProject = async (id: string) => {
+    const { error } = await supabase.from('projects').delete().eq('id', id)
+    if (error) {
+      alert("Failed to delete project.")
+    } else {
+      setProjects(projects.filter(p => p.id !== id))
+    }
   }
 
   const handleApply = (id: string) => {
@@ -120,6 +140,13 @@ export default function ProjectHub() {
                 <CardHeader className="pt-8">
                   <div className="flex justify-between items-start">
                     <CardTitle className="leading-tight">{project.title}</CardTitle>
+                    <button 
+                      onClick={() => handleDeleteProject(project.id)}
+                      className="text-slate-400 hover:text-red-500 text-xs font-bold bg-slate-100 hover:bg-red-50 px-2 py-1 rounded transition-colors"
+                      title="Delete Project"
+                    >
+                      Delete
+                    </button>
                   </div>
                   <CardDescription className="mt-1">
                     {project.endorsed_by_faculty ? (
@@ -158,9 +185,8 @@ export default function ProjectHub() {
                   <Button 
                     className={`w-full transition-all font-bold ${project.applied ? 'bg-green-600 hover:bg-green-700 shadow-inner' : 'shadow-sm'}`}
                     onClick={() => handleApply(project.id)}
-                    disabled={project.isNew}
                   >
-                    {project.isNew ? "Your Project" : project.applied ? "Request Sent ✓" : "Apply to Join"}
+                    {project.applied ? "Request Sent ✓" : "Apply to Join"}
                   </Button>
                 </CardFooter>
               </Card>
