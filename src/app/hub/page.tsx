@@ -7,8 +7,18 @@ import { supabase } from "@/lib/supabase"
 // Hardcoded user skills for the "Smart Matching" feature demo
 const STUDENT_SKILLS = ["React", "Python", "UI/UX Designer", "Node.js"]
 
+interface Project {
+  id: string
+  title: string
+  description: string
+  open_roles: string[]
+  endorsed_by_faculty: boolean
+  applied?: boolean
+  isNew?: boolean
+}
+
 export default function ProjectHub() {
-  const [projects, setProjects] = useState<any[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   

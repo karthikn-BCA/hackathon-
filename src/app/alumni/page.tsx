@@ -52,7 +52,7 @@ export default function AlumniPortal() {
         <h3 className="font-bold text-lg mb-4 text-slate-400 uppercase tracking-widest text-xs">Your Previous Advice</h3>
         <Card className="opacity-70">
           <CardContent className="p-4">
-            <p className="text-sm italic text-slate-600">"Focus on building 1 solid end-to-end project rather than 10 half-finished ones. Recruiters want to see that you can deploy and maintain code."</p>
+            <p className="text-sm italic text-slate-600">&quot;Focus on building 1 solid end-to-end project rather than 10 half-finished ones. Recruiters want to see that you can deploy and maintain code.&quot;</p>
             <div className="text-xs font-bold text-slate-400 mt-3 flex justify-between">
               <span>Posted 2 months ago</span>
               <span>♥ 14 students liked this</span>

@@ -125,7 +125,7 @@ export default function StudentDashboard() {
                 From MIT Alumni
               </div>
               <p className="text-sm text-slate-700 italic mt-2">
-                "Focus on building 1 solid end-to-end project rather than 10 half-finished ones. Recruiters want to see that you can deploy and maintain code. Don't skip the testing phase!"
+                &quot;Focus on building 1 solid end-to-end project rather than 10 half-finished ones. Recruiters want to see that you can deploy and maintain code. Don&apos;t skip the testing phase!&quot;
               </p>
               <div className="text-xs font-bold text-slate-500 mt-4 flex items-center gap-2">
                 <div className="w-6 h-6 bg-slate-200 rounded-full flex items-center justify-center">JS</div>
