@@ -14,7 +14,7 @@ export function Navbar() {
     setRole(newRole)
     if (newRole === "faculty") router.push("/faculty")
     else if (newRole === "recruiter") router.push("/recruiter")
-    else if (newRole === "student" && (pathname === "/faculty" || pathname === "/recruiter")) router.push("/hub")
+    else if (newRole === "student" && (pathname === "/faculty" || pathname === "/recruiter")) router.push("/dashboard")
   }
 
   return (
@@ -25,9 +25,11 @@ export function Navbar() {
       <div className="flex gap-6 items-center">
         {role === "student" && (
           <>
+            <Link href="/dashboard" className={pathname === "/dashboard" ? "font-bold text-blue-600" : "text-muted-foreground hover:text-slate-900"}>Dashboard</Link>
             <Link href="/hub" className={pathname === "/hub" ? "font-bold text-blue-600" : "text-muted-foreground hover:text-slate-900"}>Project Hub</Link>
             <Link href="/roadmaps" className={pathname === "/roadmaps" ? "font-bold text-blue-600" : "text-muted-foreground hover:text-slate-900"}>Roadmaps</Link>
-            <Link href="/industry" className={pathname === "/industry" ? "font-bold text-blue-600" : "text-muted-foreground hover:text-slate-900"}>Industry Projects</Link>
+            <Link href="/assessments" className={pathname === "/assessments" ? "font-bold text-blue-600" : "text-muted-foreground hover:text-slate-900"}>Assessments</Link>
+            <Link href="/portfolio" className={pathname === "/portfolio" ? "font-bold text-blue-600" : "text-muted-foreground hover:text-slate-900 hidden lg:block"}>Portfolio</Link>
           </>
         )}
         {role === "faculty" && (

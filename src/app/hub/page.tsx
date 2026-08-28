@@ -1,31 +1,15 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { supabase } from "@/lib/supabase"
 
-const initialProjects = [
-  {
-    id: "1",
-    title: "AI-Powered Study Planner",
-    description: "An app that generates daily study schedules based on syllabus and exam dates.",
-    creator: "Alice (CS 3rd Year)",
-    openRoles: ["Frontend Developer", "UI/UX Designer"],
-    endorsed: true,
-    applied: false
-  },
-  {
-    id: "2",
-    title: "Campus Lost & Found",
-    description: "A centralized portal for reporting and claiming lost items on campus.",
-    creator: "Bob (IT 2nd Year)",
-    openRoles: ["Backend Developer (Node.js)"],
-    endorsed: false,
-    applied: false
-  }
-]
+// Hardcoded user skills for the "Smart Matching" feature demo
+const STUDENT_SKILLS = ["React", "Python", "UI/UX Designer", "Node.js"]
 
 export default function ProjectHub() {
-  const [projects, setProjects] = useState(initialProjects)
+  const [projects, setProjects] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   
   // Form State
@@ -34,23 +18,45 @@ export default function ProjectHub() {
   const [teamSize, setTeamSize] = useState("2")
   const [skills, setSkills] = useState("")
 
-  const handlePostProject = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetchProjects()
+  }, [])
+
+  const fetchProjects = async () => {
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .order('created_at', { ascending: false })
+    
+    if (data) {
+      setProjects(data.map(p => ({ ...p, applied: false })))
+    }
+    setLoading(false)
+  }
+
+  const handlePostProject = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    const newProject = {
-      id: Date.now().toString(),
-      title,
-      description,
-      creator: "You (Student)",
-      openRoles: skills.split(",").map(s => s.trim()).filter(s => s),
-      endorsed: false,
-      applied: false
-    }
-
-    setProjects([newProject, ...projects])
-    setIsModalOpen(false)
+    const openRoles = skills.split(",").map(s => s.trim()).filter(s => s)
     
-    // Reset form
+    // Insert into live Supabase
+    const { data, error } = await supabase
+      .from('projects')
+      .insert([
+        {
+          title,
+          description,
+          open_roles: openRoles,
+          endorsed_by_faculty: false
+        }
+      ])
+      .select()
+
+    if (data && data[0]) {
+      setProjects([{ ...data[0], applied: false, isNew: true }, ...projects])
+    }
+    
+    setIsModalOpen(false)
     setTitle("")
     setDescription("")
     setTeamSize("2")
@@ -63,97 +69,145 @@ export default function ProjectHub() {
     ))
   }
 
+  // Calculate match percentage
+  const calculateMatch = (openRoles: string[]) => {
+    if (!openRoles || openRoles.length === 0) return 0
+    const matched = openRoles.filter(role => 
+      STUDENT_SKILLS.some(skill => role.toLowerCase().includes(skill.toLowerCase()) || skill.toLowerCase().includes(role.toLowerCase()))
+    )
+    return Math.round((matched.length / openRoles.length) * 100)
+  }
+
   return (
     <div className="space-y-6 relative">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Project Hub</h1>
-          <p className="text-muted-foreground">Find teams and ideas within your college network.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight">Project Matching Hub</h1>
+          <p className="text-muted-foreground mt-1">We analyzed your verified skills. Here are the best teams for you.</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)}>Post a Project</Button>
+        <div className="flex items-center gap-4">
+          <div className="text-right hidden md:block">
+            <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Your Profile</div>
+            <div className="text-sm font-semibold text-blue-600">Python, React, UI/UX</div>
+          </div>
+          <Button onClick={() => setIsModalOpen(true)} className="shadow-md">Post a Project</Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map(project => (
-          <Card key={project.id} className="flex flex-col">
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <CardTitle>{project.title}</CardTitle>
-                {project.endorsed && (
-                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-semibold">
-                    Faculty Endorsed
-                  </span>
+      {loading ? (
+        <div className="py-20 text-center animate-pulse text-slate-400 font-semibold">Syncing with database...</div>
+      ) : projects.length === 0 ? (
+        <div className="py-20 text-center border-2 border-dashed rounded-xl text-slate-400">
+          No projects yet. Be the first to post one!
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map(project => {
+            const matchScore = calculateMatch(project.open_roles)
+            const isHighMatch = matchScore >= 75
+            
+            return (
+              <Card key={project.id} className={`flex flex-col relative overflow-hidden transition-all hover:shadow-lg ${project.isNew ? 'ring-2 ring-blue-500' : ''}`}>
+                {/* Match Score Badge */}
+                {matchScore > 0 && (
+                  <div className={`absolute top-0 right-0 px-3 py-1 text-xs font-bold text-white rounded-bl-lg shadow-sm
+                    ${isHighMatch ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-amber-500 to-orange-500'}
+                  `}>
+                    {matchScore}% Match
+                  </div>
                 )}
-              </div>
-              <CardDescription>Created by {project.creator}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <p className="text-sm mb-4">{project.description}</p>
-              <div>
-                <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Open Roles ({project.openRoles.length})</h4>
-                <div className="flex flex-wrap gap-2">
-                  {project.openRoles.length > 0 ? project.openRoles.map(role => (
-                    <span key={role} className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded border border-blue-200">
-                      {role}
-                    </span>
-                  )) : (
-                    <span className="text-xs text-slate-400">Team full / No roles specified</span>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button 
-                className={`w-full transition-all ${project.applied ? 'bg-green-600 hover:bg-green-700' : ''}`}
-                onClick={() => handleApply(project.id)}
-                disabled={project.creator === "You (Student)"}
-              >
-                {project.creator === "You (Student)" ? "Your Project" : project.applied ? "Request Sent ✓ (Click to Cancel)" : "Apply to Join"}
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+                
+                <CardHeader className="pt-8">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="leading-tight">{project.title}</CardTitle>
+                  </div>
+                  <CardDescription className="mt-1">
+                    {project.endorsed_by_faculty ? (
+                      <span className="inline-flex items-center gap-1 text-green-700 bg-green-50 px-2 py-0.5 rounded text-xs font-bold border border-green-200">
+                        ✓ Faculty Verified
+                      </span>
+                    ) : (
+                      "Student Project"
+                    )}
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent className="flex-1">
+                  <p className="text-sm mb-6 text-slate-600 line-clamp-3">{project.description}</p>
+                  
+                  <div>
+                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Required Skills</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {project.open_roles && project.open_roles.length > 0 ? project.open_roles.map((role: string) => {
+                        const isMatched = STUDENT_SKILLS.some(skill => role.toLowerCase().includes(skill.toLowerCase()) || skill.toLowerCase().includes(role.toLowerCase()))
+                        return (
+                          <span key={role} className={`text-[11px] px-2 py-1 rounded border font-medium
+                            ${isMatched ? 'bg-green-50 text-green-700 border-green-200' : 'bg-slate-50 text-slate-600 border-slate-200'}
+                          `}>
+                            {isMatched && "✓ "} {role}
+                          </span>
+                        )
+                      }) : (
+                        <span className="text-xs text-slate-400 italic">No specific skills listed</span>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+                
+                <CardFooter className="bg-slate-50 pt-4 border-t mt-4">
+                  <Button 
+                    className={`w-full transition-all font-bold ${project.applied ? 'bg-green-600 hover:bg-green-700 shadow-inner' : 'shadow-sm'}`}
+                    onClick={() => handleApply(project.id)}
+                    disabled={project.isNew}
+                  >
+                    {project.isNew ? "Your Project" : project.applied ? "Request Sent ✓" : "Apply to Join"}
+                  </Button>
+                </CardFooter>
+              </Card>
+            )
+          })}
+        </div>
+      )}
 
       {/* Modal Overlay */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold">Post a New Project</h2>
-              <p className="text-slate-500 text-sm">Fill in the details to find teammates.</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 border-b bg-slate-50">
+              <h2 className="text-2xl font-extrabold tracking-tight">Post a New Project</h2>
+              <p className="text-slate-500 text-sm mt-1">It will instantly sync to the live Supabase database.</p>
             </div>
             
-            <form onSubmit={handlePostProject} className="p-6 space-y-4">
+            <form onSubmit={handlePostProject} className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-semibold mb-1">Project Topic / Title</label>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">Project Topic / Title</label>
                 <input 
                   required 
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                  className="w-full border rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" 
                   placeholder="e.g. Smart Campus Parking App" 
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-semibold mb-1">Description</label>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">Description</label>
                 <textarea 
                   required 
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full border rounded-md p-2 text-sm h-24 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  placeholder="What problem does it solve?" 
+                  className="w-full border rounded-lg p-2.5 text-sm h-28 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm resize-none" 
+                  placeholder="What problem does it solve? Who is it for?" 
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-semibold mb-1">Team Size</label>
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5">Team Size</label>
                   <select 
                     value={teamSize}
                     onChange={(e) => setTeamSize(e.target.value)}
-                    className="w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-white"
                   >
                     <option value="2">2 Members</option>
                     <option value="3">3 Members</option>
@@ -162,20 +216,20 @@ export default function ProjectHub() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-1">Skills Needed</label>
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5">Skills Needed</label>
                   <input 
                     required 
                     value={skills}
                     onChange={(e) => setSkills(e.target.value)}
-                    className="w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    placeholder="e.g. React, Python (comma separated)" 
+                    className="w-full border rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" 
+                    placeholder="e.g. React, Python" 
                   />
                 </div>
               </div>
 
-              <div className="pt-4 flex justify-end gap-2">
+              <div className="pt-4 flex justify-end gap-3 border-t mt-6 pt-6">
                 <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-                <Button type="submit">Post Project</Button>
+                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">Post to Live Database</Button>
               </div>
             </form>
           </div>

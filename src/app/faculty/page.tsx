@@ -36,30 +36,38 @@ export default function FacultyPortal() {
         <p className="text-muted-foreground">Review and endorse student projects from your college.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         {projects.map(project => (
-          <Card key={project.id}>
+          <Card key={project.id} className={`transition-all ${project.endorsed ? 'border-green-200 bg-green-50/30' : ''}`}>
             <CardHeader>
               <div className="flex justify-between items-start">
-                <CardTitle>{project.title}</CardTitle>
+                <CardTitle className="text-xl">{project.title}</CardTitle>
                 {project.endorsed && (
-                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-semibold">
-                    Endorsed
+                  <span className="bg-green-500 text-white text-[10px] uppercase tracking-widest px-2 py-1 rounded font-bold shadow-sm">
+                    Verified ✓
                   </span>
                 )}
               </div>
-              <CardDescription>Created by {project.creator}</CardDescription>
+              <CardDescription>Submitted by {project.creator}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm">{project.description}</p>
+              <p className="text-sm text-slate-600 mb-4">{project.description}</p>
+              <div className="bg-slate-50 border rounded-lg p-3 text-xs">
+                <div className="font-bold mb-1 uppercase tracking-wider text-[10px] text-slate-400">Verification Checklist</div>
+                <ul className="space-y-1 text-slate-600">
+                  <li className="flex items-center gap-2"><span>{project.endorsed ? '✅' : '⏳'}</span> Code repository analyzed</li>
+                  <li className="flex items-center gap-2"><span>{project.endorsed ? '✅' : '⏳'}</span> Student contributions validated</li>
+                  <li className="flex items-center gap-2"><span>{project.endorsed ? '✅' : '⏳'}</span> Live demo reviewed</li>
+                </ul>
+              </div>
             </CardContent>
             <CardFooter>
               <Button 
                 variant={project.endorsed ? "outline" : "default"} 
-                className="w-full"
+                className={`w-full font-bold ${project.endorsed ? 'text-slate-500 hover:text-red-600' : 'bg-blue-600 hover:bg-blue-700'}`}
                 onClick={() => toggleEndorsement(project.id)}
               >
-                {project.endorsed ? "Remove Endorsement" : "Endorse Project"}
+                {project.endorsed ? "Revoke Verification" : "Verify & Add to Student Portfolio"}
               </Button>
             </CardFooter>
           </Card>
