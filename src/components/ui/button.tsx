@@ -9,26 +9,31 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "default", size = "default", asChild = false, ...props }, ref) => {
-    // If asChild is used (like with next/link), we just pass children directly
+    
+    const variantClasses = {
+      default: "bg-slate-900 text-slate-50 hover:bg-slate-900/90",
+      destructive: "bg-red-500 text-slate-50 hover:bg-red-500/90",
+      outline: "border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900",
+      secondary: "bg-slate-100 text-slate-900 hover:bg-slate-100/80",
+      ghost: "hover:bg-slate-100 hover:text-slate-900",
+      link: "text-slate-900 underline-offset-4 hover:underline"
+    }[variant];
+
+    const sizeClasses = {
+      default: "h-10 px-4 py-2",
+      sm: "h-9 rounded-md px-3",
+      lg: "h-11 rounded-md px-8",
+      icon: "h-10 w-10"
+    }[size];
+
+    const baseClasses = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
+
+    const finalClasses = cn(baseClasses, variantClasses, sizeClasses, className);
+
     if (asChild) {
       return (
         <span
-          className={cn(
-            "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-            {
-              "bg-slate-900 text-slate-50 hover:bg-slate-900/90": variant === "default",
-              "bg-red-500 text-slate-50 hover:bg-red-500/90": variant === "destructive",
-              "border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900": variant === "outline",
-              "bg-slate-100 text-slate-900 hover:bg-slate-100/80": variant === "secondary",
-              "hover:bg-slate-100 hover:text-slate-900": variant === "ghost",
-              "text-slate-900 underline-offset-4 hover:underline": variant === "link",
-              "h-10 px-4 py-2": size === "default",
-              "h-9 rounded-md px-3": size === "sm",
-              "h-11 rounded-md px-8": size === "lg",
-              "h-10 w-10": size === "icon",
-            },
-            className
-          )}
+          className={finalClasses}
           {...(props as any)}
         />
       )
@@ -37,22 +42,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={cn(
-          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-          {
-            "bg-slate-900 text-slate-50 hover:bg-slate-900/90": variant === "default",
-            "bg-red-500 text-slate-50 hover:bg-red-500/90": variant === "destructive",
-            "border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900": variant === "outline",
-            "bg-slate-100 text-slate-900 hover:bg-slate-100/80": variant === "secondary",
-            "hover:bg-slate-100 hover:text-slate-900": variant === "ghost",
-            "text-slate-900 underline-offset-4 hover:underline": variant === "link",
-            "h-10 px-4 py-2": size === "default",
-            "h-9 rounded-md px-3": size === "sm",
-            "h-11 rounded-md px-8": size === "lg",
-            "h-10 w-10": size === "icon",
-          },
-          className
-        )}
+        className={finalClasses}
         {...props}
       />
     )
