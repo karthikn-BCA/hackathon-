@@ -8,13 +8,14 @@ export function Navbar() {
   const router = useRouter()
   
   // For the hackathon demo, we use a simple state to switch roles
-  const [role, setRole] = useState<"student" | "faculty" | "recruiter">("student")
+  const [role, setRole] = useState<"student" | "faculty" | "recruiter" | "alumni">("student")
 
-  const handleRoleChange = (newRole: "student" | "faculty" | "recruiter") => {
+  const handleRoleChange = (newRole: "student" | "faculty" | "recruiter" | "alumni") => {
     setRole(newRole)
     if (newRole === "faculty") router.push("/faculty")
     else if (newRole === "recruiter") router.push("/recruiter")
-    else if (newRole === "student" && (pathname === "/faculty" || pathname === "/recruiter")) router.push("/dashboard")
+    else if (newRole === "alumni") router.push("/alumni")
+    else if (newRole === "student" && (pathname === "/faculty" || pathname === "/recruiter" || pathname === "/alumni")) router.push("/dashboard")
   }
 
   return (
@@ -42,10 +43,15 @@ export function Navbar() {
             <Link href="/recruiter" className={pathname === "/recruiter" ? "font-bold text-blue-600" : "text-muted-foreground hover:text-slate-900"}>Talent Search</Link>
           </>
         )}
+        {role === "alumni" && (
+          <>
+            <Link href="/alumni" className={pathname === "/alumni" ? "font-bold text-blue-600" : "text-muted-foreground hover:text-slate-900"}>Alumni Portal</Link>
+          </>
+        )}
       </div>
       <div className="flex items-center gap-4">
         <div className="flex items-center bg-slate-100 p-1 rounded-full border shadow-sm">
-          {(["student", "faculty", "recruiter"] as const).map((r) => (
+          {(["student", "faculty", "recruiter", "alumni"] as const).map((r) => (
             <button
               key={r}
               onClick={() => handleRoleChange(r)}

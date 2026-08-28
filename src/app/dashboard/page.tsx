@@ -110,6 +110,31 @@ export default function StudentDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Alumni Suggestions */}
+      <div className="pt-4">
+        <Card className="border-blue-200 bg-blue-50/30">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <span className="text-xl">🎓</span> Alumni Insights
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-white border rounded-xl p-4 shadow-sm relative">
+              <div className="absolute top-0 right-0 bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-1 rounded-bl-lg uppercase tracking-widest">
+                From MIT Alumni
+              </div>
+              <p className="text-sm text-slate-700 italic mt-2">
+                "Focus on building 1 solid end-to-end project rather than 10 half-finished ones. Recruiters want to see that you can deploy and maintain code. Don't skip the testing phase!"
+              </p>
+              <div className="text-xs font-bold text-slate-500 mt-4 flex items-center gap-2">
+                <div className="w-6 h-6 bg-slate-200 rounded-full flex items-center justify-center">JS</div>
+                <span>John S. (Software Engineer @ Google)</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
