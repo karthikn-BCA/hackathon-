@@ -57,10 +57,17 @@ const ROADMAPS = {
 
 type RoadmapKey = keyof typeof ROADMAPS;
 
+type RoadmapNode = {
+  id: string;
+  label: string;
+  status: string;
+  description: string;
+};
+
 export default function RoadmapsPage() {
   const [activeTab, setActiveTab] = useState<RoadmapKey>("frontend")
   const [nodes, setNodes] = useState(ROADMAPS["frontend"].nodes)
-  const [selectedNode, setSelectedNode] = useState<any>(ROADMAPS["frontend"].nodes[2])
+  const [selectedNode, setSelectedNode] = useState<RoadmapNode | null>(ROADMAPS["frontend"].nodes[2])
 
   // Switch roadmap
   useEffect(() => {

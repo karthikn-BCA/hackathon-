@@ -34,7 +34,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       return (
         <span
           className={finalClasses}
-          {...(props as any)}
+          {...props}
         />
       )
     }
