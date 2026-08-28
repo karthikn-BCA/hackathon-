@@ -90,19 +90,19 @@ export default function RoadmapsPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-100px)] gap-6">
+    <div className="flex flex-col h-[calc(100vh-100px)] gap-6 p-4">
       
       {/* Top Tabs for Courses */}
-      <div className="flex gap-2 overflow-x-auto pb-2 border-b">
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
         {(Object.keys(ROADMAPS) as RoadmapKey[]).map((key) => (
           <button
             key={key}
             onClick={() => setActiveTab(key)}
             className={`
-              px-4 py-2 rounded-t-lg font-bold text-sm transition-all whitespace-nowrap
+              px-6 py-2.5 rounded-full font-bold text-sm transition-all whitespace-nowrap shadow-sm
               ${activeTab === key 
-                ? "bg-slate-900 text-white" 
-                : "bg-slate-100 text-slate-500 hover:bg-slate-200"}
+                ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md scale-105" 
+                : "bg-white text-slate-500 hover:bg-slate-50 border"}
             `}
           >
             {ROADMAPS[key].title}
@@ -110,67 +110,73 @@ export default function RoadmapsPage() {
         ))}
       </div>
 
-      <div className="flex gap-6 flex-1 overflow-hidden bg-slate-50">
+      <div className="flex gap-6 flex-1 overflow-hidden">
         
         {/* Main Roadmap Area */}
-        <div className="flex-1 border rounded-lg bg-white shadow-sm p-8 relative overflow-y-auto">
+        <div className="flex-1 border rounded-2xl bg-white shadow-sm p-8 relative overflow-y-auto bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+          
           <div className="mt-8 max-w-2xl mx-auto relative">
             
             {/* Main vertical path line */}
-            <div className="absolute w-2 bg-slate-200 h-full left-1/2 -translate-x-1/2 z-0 rounded-full"></div>
+            <div className="absolute w-1.5 bg-gradient-to-b from-blue-200 via-indigo-200 to-slate-200 h-full left-1/2 -translate-x-1/2 z-0 rounded-full"></div>
 
             {nodes.map((node, idx) => {
               const isLeft = idx % 2 === 0;
               return (
-                <div key={node.id} className="relative z-10 w-full flex items-center mb-16">
+                <div key={node.id} className="relative z-10 w-full flex items-center mb-12 group">
                   
-                  {/* Left Side (Empty if item is right) */}
+                  {/* Left Side */}
                   <div className={`w-1/2 pr-12 flex justify-end ${!isLeft ? 'invisible' : ''}`}>
                     <button 
                       onClick={() => setSelectedNode(node)}
                       className={`
-                        w-64 p-4 rounded-lg font-bold text-left transition-all shadow-md relative
-                        ${node.status === "completed" ? "bg-slate-800 text-white border-2 border-slate-900 hover:bg-slate-700" : ""}
-                        ${node.status === "current" ? "bg-blue-600 text-white border-2 border-blue-700 ring-4 ring-blue-200 hover:bg-blue-500 scale-105" : ""}
-                        ${node.status === "locked" ? "bg-white text-slate-500 border-2 border-slate-300 hover:border-slate-400" : ""}
+                        w-72 p-5 rounded-xl font-bold text-left transition-all shadow-md relative group-hover:-translate-y-1 group-hover:shadow-lg
+                        ${node.status === "completed" ? "bg-gradient-to-br from-emerald-500 to-green-600 text-white border-none" : ""}
+                        ${node.status === "current" ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-none ring-4 ring-blue-100 shadow-blue-200/50" : ""}
+                        ${node.status === "locked" ? "bg-white text-slate-500 border border-slate-200" : ""}
                       `}
                     >
                       {/* Connector line to center */}
-                      <div className={`absolute top-1/2 -right-12 w-12 h-1 ${node.status === 'locked' ? 'bg-slate-300' : 'bg-slate-900'} -translate-y-1/2 z-0`}></div>
+                      <div className={`absolute top-1/2 -right-12 w-12 h-1 ${node.status === 'locked' ? 'bg-slate-200' : (node.status === 'completed' ? 'bg-emerald-500' : 'bg-blue-600')} -translate-y-1/2 z-0`}></div>
                       
-                      <div className="text-lg">{node.label}</div>
-                      <div className="text-xs font-normal mt-1 opacity-80 uppercase tracking-widest flex items-center gap-1">
-                        {node.status === "completed" && "✅ Done"}
-                        {node.status === "current" && "🚀 In Progress"}
-                        {node.status === "locked" && "🔒 Locked"}
+                      <div className="text-lg mb-1">{node.label}</div>
+                      <div className={`text-xs font-semibold uppercase tracking-widest flex items-center gap-1.5 opacity-90
+                        ${node.status === "locked" ? "text-slate-400" : "text-white"}
+                      `}>
+                        {node.status === "completed" && <span className="bg-white/20 px-2 py-0.5 rounded-full">✓ Done</span>}
+                        {node.status === "current" && <span className="bg-white/20 px-2 py-0.5 rounded-full animate-pulse">⚡ In Progress</span>}
+                        {node.status === "locked" && <span className="bg-slate-100 px-2 py-0.5 rounded-full">🔒 Locked</span>}
                       </div>
                     </button>
                   </div>
 
                   {/* Center Node on the line */}
-                  <div className="absolute left-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white z-20 flex items-center justify-center shadow-sm"
-                       style={{ backgroundColor: node.status === 'locked' ? '#cbd5e1' : '#0f172a' }}>
+                  <div className={`absolute left-1/2 -translate-x-1/2 w-8 h-8 rounded-full border-4 border-white z-20 flex items-center justify-center shadow-md transition-colors
+                       ${node.status === 'completed' ? 'bg-emerald-500' : (node.status === 'current' ? 'bg-blue-600 ring-4 ring-blue-100' : 'bg-slate-300')}
+                  `}>
                   </div>
 
-                  {/* Right Side (Empty if item is left) */}
+                  {/* Right Side */}
                   <div className={`w-1/2 pl-12 flex justify-start ${isLeft ? 'invisible' : ''}`}>
                     <button 
                       onClick={() => setSelectedNode(node)}
                       className={`
-                        w-64 p-4 rounded-lg font-bold text-left transition-all shadow-md relative
-                        ${node.status === "completed" ? "bg-slate-800 text-white border-2 border-slate-900 hover:bg-slate-700" : ""}
-                        ${node.status === "current" ? "bg-blue-600 text-white border-2 border-blue-700 ring-4 ring-blue-200 hover:bg-blue-500 scale-105" : ""}
-                        ${node.status === "locked" ? "bg-white text-slate-500 border-2 border-slate-300 hover:border-slate-400" : ""}
+                        w-72 p-5 rounded-xl font-bold text-left transition-all shadow-md relative group-hover:-translate-y-1 group-hover:shadow-lg
+                        ${node.status === "completed" ? "bg-gradient-to-br from-emerald-500 to-green-600 text-white border-none" : ""}
+                        ${node.status === "current" ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-none ring-4 ring-blue-100 shadow-blue-200/50" : ""}
+                        ${node.status === "locked" ? "bg-white text-slate-500 border border-slate-200" : ""}
                       `}
                     >
                       {/* Connector line to center */}
-                      <div className={`absolute top-1/2 -left-12 w-12 h-1 ${node.status === 'locked' ? 'bg-slate-300' : 'bg-slate-900'} -translate-y-1/2 z-0`}></div>
+                      <div className={`absolute top-1/2 -left-12 w-12 h-1 ${node.status === 'locked' ? 'bg-slate-200' : (node.status === 'completed' ? 'bg-emerald-500' : 'bg-blue-600')} -translate-y-1/2 z-0`}></div>
                       
-                      <div className="text-lg">{node.label}</div>
-                      <div className="text-xs font-normal mt-1 opacity-80 uppercase tracking-widest flex items-center gap-1">
-                        {node.status === "completed" && "✅ Done"}
-                        {node.status === "current" && "🚀 In Progress"}
-                        {node.status === "locked" && "🔒 Locked"}
+                      <div className="text-lg mb-1">{node.label}</div>
+                      <div className={`text-xs font-semibold uppercase tracking-widest flex items-center gap-1.5 opacity-90
+                        ${node.status === "locked" ? "text-slate-400" : "text-white"}
+                      `}>
+                        {node.status === "completed" && <span className="bg-white/20 px-2 py-0.5 rounded-full">✓ Done</span>}
+                        {node.status === "current" && <span className="bg-white/20 px-2 py-0.5 rounded-full animate-pulse">⚡ In Progress</span>}
+                        {node.status === "locked" && <span className="bg-slate-100 px-2 py-0.5 rounded-full">🔒 Locked</span>}
                       </div>
                     </button>
                   </div>
@@ -183,64 +189,53 @@ export default function RoadmapsPage() {
         
         {/* Sidebar Area */}
         {selectedNode && (
-          <div className="w-96 border rounded-lg bg-white p-6 shadow-sm flex flex-col relative overflow-hidden">
+          <div className="w-96 border rounded-2xl bg-white p-8 shadow-lg flex flex-col relative overflow-hidden">
             
-            {/* Header Status Bar */}
-            <div className={`absolute top-0 left-0 w-full h-2 
-              ${selectedNode.status === 'completed' ? 'bg-slate-800' : ''}
-              ${selectedNode.status === 'current' ? 'bg-blue-600' : ''}
-              ${selectedNode.status === 'locked' ? 'bg-slate-300' : ''}
+            {/* Header Status Bar Gradient */}
+            <div className={`absolute top-0 left-0 w-full h-3 
+              ${selectedNode.status === 'completed' ? 'bg-gradient-to-r from-emerald-400 to-green-500' : ''}
+              ${selectedNode.status === 'current' ? 'bg-gradient-to-r from-blue-500 to-indigo-500' : ''}
+              ${selectedNode.status === 'locked' ? 'bg-slate-200' : ''}
             `}></div>
 
-            <div className="text-xs font-bold text-blue-600 uppercase tracking-widest mt-2 mb-1">
+            <div className="text-xs font-bold text-indigo-600 uppercase tracking-widest mt-4 mb-2">
               {ROADMAPS[activeTab].title}
             </div>
-            <h3 className="font-bold text-2xl mb-2">{selectedNode.label}</h3>
+            <h3 className="font-extrabold text-3xl mb-4 tracking-tight text-slate-900">{selectedNode.label}</h3>
             
-            <div className={`inline-block px-2 py-1 rounded text-xs mb-4 font-bold uppercase w-fit
-              ${selectedNode.status === 'completed' ? 'bg-slate-100 text-slate-800' : ''}
-              ${selectedNode.status === 'current' ? 'bg-blue-50 text-blue-700' : ''}
-              ${selectedNode.status === 'locked' ? 'bg-slate-100 text-slate-500' : ''}
+            <div className={`inline-flex px-3 py-1.5 rounded-full text-xs font-bold uppercase w-fit tracking-wider shadow-sm border
+              ${selectedNode.status === 'completed' ? 'bg-green-50 text-green-700 border-green-200' : ''}
+              ${selectedNode.status === 'current' ? 'bg-blue-50 text-blue-700 border-blue-200' : ''}
+              ${selectedNode.status === 'locked' ? 'bg-slate-50 text-slate-500 border-slate-200' : ''}
             `}>
-              Status: {selectedNode.status}
+              {selectedNode.status}
             </div>
 
-            <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+            <p className="text-slate-600 mb-8 mt-4 leading-relaxed">
               {selectedNode.description}
             </p>
             
             <div className="space-y-4 flex-1">
-              <h4 className="font-semibold text-sm uppercase tracking-wider text-slate-400">Recommended Resources</h4>
-              <ul className="space-y-3">
-                <li>
-                  <a href="#" className="group flex flex-col">
-                    <span className="text-sm font-semibold text-blue-600 group-hover:underline">Official Documentation</span>
-                    <span className="text-xs text-slate-500">Official documentation and deep dive guides.</span>
+              <h4 className="font-bold text-sm uppercase tracking-widest text-slate-400">Curated Resources</h4>
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <a key={i} href="#" className="group flex flex-col p-3 rounded-lg border bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors">
+                    <span className="text-sm font-bold text-indigo-600 group-hover:text-indigo-700">Official Resource {i}</span>
+                    <span className="text-xs text-slate-500 mt-1">Interactive guide and sandbox.</span>
                   </a>
-                </li>
-                <li>
-                  <a href="#" className="group flex flex-col">
-                    <span className="text-sm font-semibold text-blue-600 group-hover:underline">Interactive Sandbox</span>
-                    <span className="text-xs text-slate-500">Practice tasks in the browser safely.</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="group flex flex-col">
-                    <span className="text-sm font-semibold text-blue-600 group-hover:underline">YouTube Crash Course</span>
-                    <span className="text-xs text-slate-500">Video tutorial for absolute beginners.</span>
-                  </a>
-                </li>
-              </ul>
+                ))}
+              </div>
             </div>
 
             <Button 
-              className="w-full mt-6 py-6 font-bold tracking-wide transition-all" 
+              className={`w-full mt-8 py-6 font-bold tracking-widest uppercase shadow-md transition-all rounded-xl
+                ${selectedNode.status === 'current' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:-translate-y-0.5' : ''}
+              `}
               onClick={markCompleted}
               disabled={selectedNode.status === "completed" || selectedNode.status === "locked"}
-              style={selectedNode.status === "current" ? { backgroundColor: '#2563eb' } : {}}
             >
-              {selectedNode.status === "completed" ? "ALREADY COMPLETED" : 
-               selectedNode.status === "locked" ? "LOCKED (FINISH PREREQUISITES)" : "MARK AS COMPLETED"}
+              {selectedNode.status === "completed" ? "Completed ✓" : 
+               selectedNode.status === "locked" ? "Locked (Prerequisites)" : "Mark as Completed"}
             </Button>
           </div>
         )}
