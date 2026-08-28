@@ -34,17 +34,22 @@ export function Navbar() {
         )}
       </div>
       <div className="flex items-center gap-4">
-        <div className="text-sm flex items-center gap-2 bg-slate-50 border px-3 py-1 rounded">
-          <span className="font-semibold text-slate-500">Demo Role:</span>
-          <select 
-            className="bg-transparent font-bold outline-none cursor-pointer"
-            value={role}
-            onChange={(e) => setRole(e.target.value as any)}
-          >
-            <option value="student">Student</option>
-            <option value="faculty">Faculty</option>
-            <option value="recruiter">Recruiter</option>
-          </select>
+        <div className="flex items-center bg-slate-100 p-1 rounded-full border shadow-sm">
+          {(["student", "faculty", "recruiter"] as const).map((r) => (
+            <button
+              key={r}
+              onClick={() => setRole(r)}
+              className={`
+                px-4 py-1.5 rounded-full text-xs font-bold capitalize transition-all
+                ${role === r 
+                  ? "bg-white text-blue-600 shadow-sm border border-slate-200" 
+                  : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50"
+                }
+              `}
+            >
+              {r}
+            </button>
+          ))}
         </div>
       </div>
     </nav>
