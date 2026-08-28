@@ -7,7 +7,21 @@ export default function Home() {
       <h1 className="text-5xl font-extrabold tracking-tight">
         Bridge the Gap Between <span className="text-blue-600">Classroom & Industry</span>
       </h1>
-      <p className="text-xl text-muted-foreground">
+      <p className="text-2xl font-semibold text-slate-800">
+        Learn. Build. Prove. Get Discovered.
+      </p>
+      <p className="text-sm font-medium text-blue-600 bg-blue-50 px-4 py-2 rounded-full border border-blue-100 flex items-center justify-center gap-2 flex-wrap">
+        <span>Assess your skills</span>
+        <span className="text-slate-300">→</span>
+        <span>Get matched to projects</span>
+        <span className="text-slate-300">→</span>
+        <span>Build real experience</span>
+        <span className="text-slate-300">→</span>
+        <span>Earn verified proof</span>
+        <span className="text-slate-300">→</span>
+        <span>Get discovered</span>
+      </p>
+      <p className="text-lg text-muted-foreground">
         Co-Lab helps students build evidence-based portfolios through interactive roadmaps, college-verified team projects, and industry-level assessments.
       </p>
       

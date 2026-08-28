@@ -59,7 +59,7 @@ export default function ProjectHub() {
 
   const handleApply = (id: string) => {
     setProjects(projects.map(p => 
-      p.id === id ? { ...p, applied: true } : p
+      p.id === id ? { ...p, applied: !p.applied } : p
     ))
   }
 
@@ -106,10 +106,9 @@ export default function ProjectHub() {
               <Button 
                 className={`w-full transition-all ${project.applied ? 'bg-green-600 hover:bg-green-700' : ''}`}
                 onClick={() => handleApply(project.id)}
-                disabled={project.applied || project.creator === "You (Student)"}
-                variant={project.applied ? "default" : "default"}
+                disabled={project.creator === "You (Student)"}
               >
-                {project.creator === "You (Student)" ? "Your Project" : project.applied ? "Request Sent ✓" : "Apply to Join"}
+                {project.creator === "You (Student)" ? "Your Project" : project.applied ? "Request Sent ✓ (Click to Cancel)" : "Apply to Join"}
               </Button>
             </CardFooter>
           </Card>

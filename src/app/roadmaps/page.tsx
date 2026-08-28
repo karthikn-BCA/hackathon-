@@ -75,25 +75,35 @@ export default function RoadmapsPage() {
     setSelectedNode(ROADMAPS[activeTab].nodes.find(n => n.status === "current") || ROADMAPS[activeTab].nodes[0])
   }, [activeTab])
 
-  const markCompleted = () => {
+  const toggleCompleted = () => {
     if (!selectedNode) return
+    
     setNodes(nds => {
       const newNodes = [...nds];
       const index = newNodes.findIndex(n => n.id === selectedNode.id);
       
-      // Mark current as completed
-      newNodes[index] = { ...newNodes[index], status: "completed" };
-      
-      // Unlock the next one if it exists
-      if (index + 1 < newNodes.length) {
-        newNodes[index + 1] = { ...newNodes[index + 1], status: "current" };
+      if (selectedNode.status === "completed") {
+        // Revert to current
+        newNodes[index] = { ...newNodes[index], status: "current" };
+        
+        // Revert the next one if it was unlocked by this one
+        if (index + 1 < newNodes.length && newNodes[index + 1].status === "current") {
+          newNodes[index + 1] = { ...newNodes[index + 1], status: "locked" };
+        }
+        setSelectedNode(newNodes[index]);
+      } else {
+        // Mark current as completed
+        newNodes[index] = { ...newNodes[index], status: "completed" };
+        
+        // Unlock the next one if it exists
+        if (index + 1 < newNodes.length && newNodes[index + 1].status === "locked") {
+          newNodes[index + 1] = { ...newNodes[index + 1], status: "current" };
+        }
+        setSelectedNode(newNodes[index]);
       }
       
       return newNodes;
     });
-    
-    // Update selected node state
-    setSelectedNode({ ...selectedNode, status: "completed" });
   }
 
   return (
@@ -238,10 +248,10 @@ export default function RoadmapsPage() {
               className={`w-full mt-6 py-5 font-bold tracking-widest uppercase shadow-md transition-all rounded-xl text-xs
                 ${selectedNode.status === 'current' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:-translate-y-0.5' : ''}
               `}
-              onClick={markCompleted}
-              disabled={selectedNode.status === "completed" || selectedNode.status === "locked"}
+              onClick={toggleCompleted}
+              disabled={selectedNode.status === "locked"}
             >
-              {selectedNode.status === "completed" ? "Completed ✓" : 
+              {selectedNode.status === "completed" ? "Completed ✓ (Click to Undo)" : 
                selectedNode.status === "locked" ? "Locked (Finish Pre-reqs)" : "Mark as Completed"}
             </Button>
           </div>
