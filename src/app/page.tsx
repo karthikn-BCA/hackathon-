@@ -11,13 +11,23 @@ export default function Home() {
         Co-Lab helps students build evidence-based portfolios through interactive roadmaps, college-verified team projects, and industry-level assessments.
       </p>
       
-      <div className="flex gap-4">
-        <Button asChild size="lg">
-          <Link href="/hub">Enter Project Hub</Link>
-        </Button>
-        <Button asChild size="lg" variant="outline">
-          <Link href="/roadmaps">Explore Roadmaps</Link>
-        </Button>
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex gap-4">
+          <Button asChild size="lg">
+            <Link href="/hub">Student: Project Hub</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link href="/roadmaps">Explore Roadmaps</Link>
+          </Button>
+        </div>
+        <div className="flex gap-4 mt-2">
+          <Button asChild variant="secondary" size="sm">
+            <Link href="/faculty">Faculty Portal</Link>
+          </Button>
+          <Button asChild variant="secondary" size="sm">
+            <Link href="/recruiter">Recruiter Talent Search</Link>
+          </Button>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12 text-left w-full">
